@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QRIS Decoder Lengkap + Penjelasan</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="min-h-screen">
+  <div class="gradient-bg text-white py-6 shadow-lg">
+    <div class="container mx-auto px-4">
+      <div class="flex flex-col sm:flex-row items-center justify-between">
+        <div class="text-center sm:text-left mb-4 sm:mb-0">
+          <h1 class="text-2xl md:text-3xl font-bold flex items-center justify-center sm:justify-start">
+            <i class="fas fa-qrcode mr-3"></i>
+            QRIS Decoder Pro
+          </h1>
+          <p class="text-indigo-100 mt-1">Dekode QRIS dengan penjelasan lengkap</p>
+        </div>
+        <div>
+          <a href="https://ianoit.github.io" class="bg-white/20 px-3 py-1 rounded-full text-sm flex items-center hover:bg-white/30 transition-colors">
+            <i class="fab fa-github mr-2"></i>
+            <span class="hidden sm:inline">ianoit.github.io</span>
+            <span class="sm:hidden">ianoit.github.io</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container mx-auto px-4 py-8">
+    <div class="bg-white rounded-xl shadow-md overflow-hidden mb-8">
+      <div class="p-6">
+        <h2 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+          <i class="fas fa-upload mr-2 text-indigo-500"></i> Unggah QRIS
+        </h2>
+        
+        <div id="uploadContainer" class="qr-upload-area rounded-lg p-8 text-center cursor-pointer mb-4">
+          <input type="file" id="fileInput" accept="image/*" class="hidden" onchange="handleImage(event)">
+          <div class="flex flex-col items-center justify-center">
+            <i class="fas fa-cloud-upload-alt text-4xl text-indigo-400 mb-3"></i>
+            <p class="text-gray-600 font-medium">Seret & lepas gambar QRIS di sini atau</p>
+            <button onclick="document.getElementById('fileInput').click()" class="mt-3 bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded-lg transition-colors">
+              <i class="fas fa-folder-open mr-2"></i> Pilih File
+            </button>
+            <p class="text-sm text-gray-500 mt-2">Format: JPG, PNG (Maks. 5MB)</p>
+          </div>
+        </div>
+        
+        <div id="canvasContainer" class="hidden">
+          <p class="text-sm text-gray-500 mb-2">Hasil pemindaian QRIS:</p>
+          <canvas id="canvas"></canvas>
+        </div>
+        
+        <div class="bg-blue-50 border-l-4 border-blue-400 p-4 hidden" id="uploadInfo">
+          <div class="flex">
+            <div class="flex-shrink-0">
+              <i class="fas fa-info-circle text-blue-400"></i>
+            </div>
+            <div class="ml-3">
+              <p class="text-sm text-blue-700">
+                <span id="fileName" class="font-medium"></span> berhasil diunggah. Sistem sedang memproses QR code...
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div class="bg-white rounded-xl shadow-md overflow-hidden">
+        <div class="p-6">
+          <h2 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+            <i class="fas fa-code mr-2 text-indigo-500"></i> Kode QRIS Lengkap
+          </h2>
+          <div class="relative">
+            <textarea id="qrisCode" readonly class="w-full h-40 p-4 border border-gray-200 rounded-lg bg-gray-50 focus:ring-2 focus:ring-indigo-200 focus:border-indigo-500 resize-none" placeholder="Kode QRIS akan muncul di sini setelah diunggah..."></textarea>
+            <button id="copyBtn" class="absolute top-2 right-2 bg-gray-100 hover:bg-gray-200 text-gray-600 p-2 rounded-md transition-colors hidden" onclick="copyToClipboard()">
+              <i class="fas fa-copy"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="bg-white rounded-xl shadow-md overflow-hidden">
+        <div class="p-6">
+          <h2 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+            <i class="fas fa-info-circle mr-2 text-indigo-500"></i> Informasi QRIS
+          </h2>
+          <div id="qrInfo" class="space-y-4">
+            <div class="bg-gray-50 rounded-lg p-6 text-center">
+              <i class="fas fa-qrcode text-4xl text-gray-300 mb-3"></i>
+              <p class="text-gray-500">Belum ada QRIS yang diunggah</p>
+              <p class="text-sm text-gray-400 mt-2">Unggah gambar QRIS untuk melihat detail</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="bg-white rounded-xl shadow-md overflow-hidden mt-8" id="resultSection">
+      <div class="p-6">
+        <h2 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+          <i class="fas fa-table mr-2 text-indigo-500"></i> Detail Parsing QRIS
+        </h2>
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+              <tr>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tag</th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Length</th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Value</th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Penjelasan</th>
+              </tr>
+            </thead>
+            <tbody id="resultBody" class="bg-white divide-y divide-gray-200">
+              <!-- Results will be inserted here -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="bg-gray-50 border-t border-gray-200 py-6 mt-12">
+    <div class="container mx-auto px-4">
+      <div class="flex flex-col md:flex-row justify-between items-center">
+        <div class="mb-4 md:mb-0">
+          <p class="text-gray-600">© <span id="currentYear"></span> QRIS Decoder.</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/jsQR.js"></script>
+  <script src="js/script.js"></script>
+</body>
+</html>

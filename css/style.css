@@ -1,0 +1,73 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f8fafc;
+}
+
+.gradient-bg {
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+}
+
+.qr-upload-area {
+    border: 2px dashed #cbd5e1;
+    transition: all 0.3s ease;
+}
+
+.qr-upload-area:hover {
+    border-color: #818cf8;
+    background-color: rgba(129, 140, 248, 0.05);
+}
+
+.qr-upload-area.active {
+    border-color: #4f46e5;
+    background-color: rgba(79, 70, 229, 0.05);
+}
+
+.tag-badge {
+    background-color: #e0e7ff;
+    color: #4f46e5;
+}
+
+.value-badge {
+    background-color: #ecfdf5;
+    color: #059669;
+}
+
+.length-badge {
+    background-color: #fef3c7;
+    color: #d97706;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #c7d2fe;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #a5b4fc;
+}
+
+#canvasContainer {
+    margin: 1rem auto;
+    max-width: 300px;
+    text-align: center;
+}
+
+#canvas {
+    max-width: 100%;
+    height: auto;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
